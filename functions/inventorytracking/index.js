@@ -29,25 +29,37 @@ export default async function (event, context, logger) {
     }    
 
     try{
-        const GRAPHQL_URL = 'http://localhost:4000/graphql'
-        const response = await fetch(GRAPHQL_URL, {
-            method: 'POST',
+        //const GRAPHQL_URL = 'http://localhost:4000/graphql'
+        const WEGMANS_URL = 'https://api.wegmans.io/stores/'
+
+        const response = await fetch(WEGMANS_URL, {
+            method: 'GET',
             headers: {
                 'content-type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-                query: `query getInventory($productID: Int!) {
-                  inventory(id: $productID){
-                    product
-                    quantity
-                  }
-                }`,
-                variables: `{
-                    "productID": ${productID}
-                }`,
-            })
+                'Access-Control-Allow-Origin': '*',
+                'Cache-Control': 'no-cache',
+                'Subscription-Key': '430935fa3c8040088f5c5e0bc9e24ade'
+            }
         })    
+
+        // const response = await fetch(GRAPHQL_URL, {
+        //     method: 'POST',
+        //     headers: {
+        //         'content-type': 'application/json',
+        //         'Access-Control-Allow-Origin': '*'
+        //     },
+        //     body: JSON.stringify({
+        //         query: `query getInventory($productID: Int!) {
+        //           inventory(id: $productID){
+        //             product
+        //             quantity
+        //           }
+        //         }`,
+        //         variables: `{
+        //             "productID": ${productID}
+        //         }`,
+        //     })
+        // })    
         
         const { data } = await response.json()
         logger.info(JSON.stringify(data));
