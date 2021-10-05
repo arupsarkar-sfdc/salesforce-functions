@@ -40,12 +40,13 @@ export default async function (event, context, logger) {
           fetch("https://api.wegmans.io/stores?Subscription-Key=430935fa3c8040088f5c5e0bc9e24ade&api-version=2018-10-18", requestOptions)
             .then(response => {
                 response.text()
-                logger.info(JSON.stringify(response.text()));
+                logger.info(response.text())
+                //logger.info(JSON.stringify(response.text()));
             })
             .then(result => {
                 
                 console.log(result)
-                logger.info(JSON.stringify(result));
+                logger.info(result);
                 return result
             })
             .catch(error => {
