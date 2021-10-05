@@ -21,19 +21,21 @@ export default async function (event, context, logger) {
       ); 
       
     // Extract Properties from Payload
-    const { productID } = event.data;  
+    const { productName } = event.data;  
     
     // Validate the payload params
-    if (!productID) {
-        throw new Error(`Please provide a product id`);
+    if (!productName) {
+        throw new Error(`Please provide a product name`);
     }    
 
     try{
 
         
         //9222b1ed26a7497fb80bc5c072a346ef
-
-          fetch("https://api.spoonacular.com/food/products/search?query=yogurt&apiKey=9222b1ed26a7497fb80bc5c072a346ef")
+        const API_KEY = "9222b1ed26a7497fb80bc5c072a346ef"
+        let URL = "https://api.spoonacular.com/food/products/search?query="+productName+"&apiKey="+API_KEY
+        logger.info('url fetched ' + URL)
+          fetch(URL)
             .then(response => response.json())
             .then(result => {
                 console.log(JSON.stringify(result))
