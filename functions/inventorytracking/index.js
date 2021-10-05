@@ -34,15 +34,11 @@ export default async function (event, context, logger) {
         //9222b1ed26a7497fb80bc5c072a346ef
 
           fetch("https://api.spoonacular.com/food/products/search?query=yogurt&apiKey=9222b1ed26a7497fb80bc5c072a346ef")
-            .then(response => {
-                response
-                logger.info(JSON.stringify(response))
-                return JSON.stringify(response)
-                //logger.info(JSON.stringify(response.text()));
-            })
+            .then(response => response.json())
             .then(result => {
-                console.log(result)
-                logger.info(result);
+                console.log(JSON.stringify(result))
+                logger.info(JSON.stringify(result));
+                return JSON.stringify(result)
             })
             .catch(error => {
                 console.log('error', error)
