@@ -34,7 +34,7 @@ export default async function (event, context, logger) {
         //9222b1ed26a7497fb80bc5c072a346ef
         const API_KEY = "9222b1ed26a7497fb80bc5c072a346ef"
         let URL = "https://api.spoonacular.com/food/products/search?query="+productName+"&apiKey="+API_KEY
-        logger.info('url fetched ' + URL)
+        logger.info('url fetched ', URL)
           fetch(URL)
             .then(response => response.json())
             .then(result => {
