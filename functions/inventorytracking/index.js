@@ -61,7 +61,7 @@ export default async function (event, context, logger) {
         //     })
         // })    
         
-        const { data } = await response.json()
+        const { data } = response.json()
         logger.info(JSON.stringify(data));
         return data;            
 
