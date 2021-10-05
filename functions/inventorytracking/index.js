@@ -40,7 +40,7 @@ export default async function (event, context, logger) {
             .then(result => {
                 console.log(JSON.stringify(result))
                 logger.info(JSON.stringify(result));
-                return JSON.stringify(result)
+                return result
             })
             .catch(error => {
                 console.log('error', error)
