@@ -31,26 +31,22 @@ export default async function (event, context, logger) {
     try{
 
         
+        //9222b1ed26a7497fb80bc5c072a346ef
 
-        let requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-          };
-          
-          fetch("https://api.wegmans.io/stores?Subscription-Key=430935fa3c8040088f5c5e0bc9e24ade&api-version=2018-10-18", requestOptions)
+          fetch("https://api.spoonacular.com/food/products/search?query=yogurt&apiKey=9222b1ed26a7497fb80bc5c072a346ef")
             .then(response => {
-                response.text()
-                logger.info(response.text())
+                response
+                logger.info(JSON.stringify(response))
+                return JSON.stringify(response)
                 //logger.info(JSON.stringify(response.text()));
             })
             .then(result => {
-                
                 console.log(result)
                 logger.info(result);
-                return result
             })
             .catch(error => {
                 console.log('error', error)
+                logger.Error(err)
             });        
 
         //const GRAPHQL_URL = 'http://localhost:4000/graphql'
