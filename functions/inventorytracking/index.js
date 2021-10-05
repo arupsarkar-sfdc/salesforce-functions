@@ -14,6 +14,7 @@ import fetch from "node-fetch";
  
 export default async function (event, context, logger) {
 
+    stores
     logger.info(
         `Invoking inventorytracking Function with payload ${JSON.stringify(
           event.data || {}
@@ -29,19 +30,30 @@ export default async function (event, context, logger) {
     }    
 
     try{
-        //const GRAPHQL_URL = 'http://localhost:4000/graphql'
-        const WEGMANS_URL = 'https://api.wegmans.io/stores/'
 
-        const response = await fetch(WEGMANS_URL, {
+        
+
+        let requestOptions = {
             method: 'GET',
-            headers: {
-                'content-type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'no-cache',
-                'Subscription-Key': '430935fa3c8040088f5c5e0bc9e24ade'
-            }
-        })    
+            redirect: 'follow'
+          };
+          
+          fetch("https://api.wegmans.io/stores?Subscription-Key=430935fa3c8040088f5c5e0bc9e24ade&api-version=2018-10-18", requestOptions)
+            .then(response => {
+                response.text()
+                logger.info(JSON.stringify(response.text()));
+            })
+            .then(result => {
+                
+                console.log(result)
+                logger.info(JSON.stringify(result));
+                return result
+            })
+            .catch(error => {
+                console.log('error', error)
+            });        
 
+        //const GRAPHQL_URL = 'http://localhost:4000/graphql'
         // const response = await fetch(GRAPHQL_URL, {
         //     method: 'POST',
         //     headers: {
@@ -60,10 +72,6 @@ export default async function (event, context, logger) {
         //         }`,
         //     })
         // })    
-        
-        const { data } = response.json()
-        logger.info(JSON.stringify(data));
-        return data;            
 
     } catch(err) {
         // Catch any DML errors and pass the throw an error with the message
