@@ -10,6 +10,7 @@
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
+import fetch from "node-fetch";
  
 export default async function (event, context, logger) {
 
