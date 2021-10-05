@@ -14,7 +14,6 @@ import fetch from "node-fetch";
  
 export default async function (event, context, logger) {
 
-    stores
     logger.info(
         `Invoking inventorytracking Function with payload ${JSON.stringify(
           event.data || {}
