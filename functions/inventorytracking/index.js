@@ -13,37 +13,53 @@
  
 export default async function (event, context, logger) {
 
+    logger.info(
+        `Invoking inventorytracking Function with payload ${JSON.stringify(
+          event.data || {}
+        )}`
+      ); 
+      
+    // Extract Properties from Payload
+    const { productID } = event.data;  
+    
+    // Validate the payload params
+    if (!productID) {
+        throw new Error(`Please provide a product id`);
+    }    
 
-    const GRAPHQL_URL = 'http://localhost:4000/graphql'
+    try{
+        const GRAPHQL_URL = 'http://localhost:4000/graphql'
+        const response = await fetch(GRAPHQL_URL, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                query: `query getInventory($productID: Int!) {
+                  inventory(id: $productID){
+                    product
+                    quantity
+                  }
+                }`,
+                variables: `{
+                    "productID": ${productID}
+                }`,
+            })
+        })    
+        
+        const { data } = await response.json()
+        logger.info(JSON.stringify(data));
+        return data;            
 
-    const response = await fetch(GRAPHQL_URL, {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-            query: `query getInventory($productID: Int!) {
-              inventory(id: $productID){
-                product
-                quantity
-              }
-            }`,
-            variables: `{
-                "productID": ${id}
-            }`,
-        })
-    })
+    } catch(err) {
+        // Catch any DML errors and pass the throw an error with the message
+        const errorMessage = `Failed to get inventory results . Root Cause: ${err.message}`;
+        logger.error(errorMessage);
+        throw new Error(errorMessage);
+    }
 
-    const { data } = await response.json()
-    console.log('---> data ' + JSON.stringify(data))
 
-    logger.info(JSON.stringify(data));
-
-    return data;
 }
 
 
-getInventory(3).then((result) => {
-    console.log('---> result ' + JSON.stringify(result))
-})
