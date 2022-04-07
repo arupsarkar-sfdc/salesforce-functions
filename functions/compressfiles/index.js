@@ -52,17 +52,19 @@ export default async function (event, context, logger) {
             .then(async (response) => {
                 console.log('---> buffer body ', response.body)
                 const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
-                await sharp(input)
-                    .webp({quality: 20})
-                    .toFile(`./outbound/${ref}`, (err) => {
-                        if(err) {
-                            console.log('---> error in sharp compression', err)
-                        }else {
-                            console.log('---> compressed success')
-                            const link = `http://localhost:8080/${ref}`
-                            console.log('---> compressed image link ', link)                            
-                        }
-                    }) 
+                const metadata = await getMetadata(input)
+                console.log('---> returned meta data ', metadata)
+                // await sharp(input)
+                //     .webp({quality: 20})
+                //     .toFile(`./outbound/${ref}`, (err) => {
+                //         if(err) {
+                //             console.log('---> error in sharp compression', err)
+                //         }else {
+                //             console.log('---> compressed success')
+                //             const link = `http://localhost:8080/${ref}`
+                //             console.log('---> compressed image link ', link)                            
+                //         }
+                //     }) 
                 
 
             })
@@ -76,6 +78,16 @@ export default async function (event, context, logger) {
 
 
     return results
+}
+
+async function getMetadata(fileRef) {
+    try {
+      const metadata = await sharp(fileRef).metadata();
+      console.log('---> inside function ', metadata);
+      return metadata
+    } catch (error) {
+      console.log(`An error occurred during processing: ${error}`);
+    }
 }
 
 async function compress(url, filename) {
