@@ -53,7 +53,10 @@ export default async function (event, context, logger) {
                 console.log('---> buffer ', buffer)
                 await sharp(buffer)
                     .webp({quality: 20})
-                    .toFile(ref)                
+                    .toFile(ref) 
+                console.log('---> compressed success')
+                const link = `http://localhost:8080/${ref}`
+                console.log('---> compressed image link ', link)
             })
             .catch(err => {
                 console.error("---> fetch error: " + err);
