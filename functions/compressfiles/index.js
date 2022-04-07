@@ -32,7 +32,7 @@ export default async function (event, context, logger) {
     //     .toFile("./uploads/" + ref)
     try {
         console.log(JSON.stringify(results))
-        const data = await JSON.parse(results)
+        const data = await JSON.parse(JSON.stringify(results))
         console.log('---> title', data.records[0].fields.title)
     }catch(err) {
         console.error('---> Error', err)
