@@ -50,8 +50,8 @@ export default async function (event, context, logger) {
                 return data
             })
             .then(async (buffer) => {
-                console.log('---> buffer ', buffer)
-                await sharp(buffer)
+                console.log('---> buffer ', buffer.body)
+                await sharp(buffer.body)
                     .webp({quality: 20})
                     .toFile(`./uploads/${ref}`, (err) => {
                         if(err) {
