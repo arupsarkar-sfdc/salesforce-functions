@@ -54,6 +54,8 @@ export default async function (event, context, logger) {
                 const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
                 const metadata = await getMetadata(input)
                 console.log('---> returned meta data ', metadata)
+                const resizeImage = await resizeImage(input)
+                
                 // await sharp(input)
                 //     .webp({quality: 20})
                 //     .toFile(`./outbound/${ref}`, (err) => {
@@ -78,6 +80,19 @@ export default async function (event, context, logger) {
 
 
     return results
+}
+
+async function resizeImage(fileRef) {
+    try{
+        await sharp(fileRef)
+        .resize({
+          width: 150,
+          height: 97
+        })
+        .toFile("./outbound/resized.jpeg");
+    }catch(err) {
+        console.log(error)
+    }
 }
 
 async function getMetadata(fileRef) {
