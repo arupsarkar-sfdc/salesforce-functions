@@ -28,11 +28,12 @@ export default async function (event, context, logger) {
         console.log(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
         console.log('---> title ', data.records[0].fields.title)
-        console.log('---> version data ', data.records[0].fields.title)
+        console.log('---> version data ', data.records[0].fields.versiondata)
         const { originalname } = data.records[0].fields.title
         const { buffer } = data.records[0].fields.versiondata
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}-${originalname}.webp`
+        console.log('---> new file name ', ref)
         await sharp(buffer)
             .webp({quality: 20})
             .toFile("./uploads/" + ref)
