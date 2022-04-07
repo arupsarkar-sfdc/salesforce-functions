@@ -50,7 +50,7 @@ export default async function (event, context, logger) {
                 return data
             })
             .then(async (response) => {
-                console.log('---> buffer body ', response.body.buffer())
+                console.log('---> buffer body ', response.body)
                 const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
                 await sharp(input)
                     .webp({quality: 20})
