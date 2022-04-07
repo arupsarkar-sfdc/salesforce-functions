@@ -47,11 +47,11 @@ export default async function (event, context, logger) {
                         'content-type': 'application/octetstream'}})
             .then(data => {
                 console.log('---> data ', data)
-                return data.arrayBuffer()
+                return data
             })
             .then(async (buffer) => {
                 console.log('---> buffer ', buffer)
-                await sharp(buffer.body)
+                await sharp(buffer)
                     .webp({quality: 20})
                     .toFile(`./uploads/${ref}`, (err) => {
                         if(err) {
