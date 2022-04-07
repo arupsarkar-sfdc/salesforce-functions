@@ -30,8 +30,14 @@ export default async function (event, context, logger) {
     // await sharp(buffer)
     //     .webp({quality: 20})
     //     .toFile("./uploads/" + ref)
-    console.log('---> original file name', originalname)
-    console.log(JSON.stringify(results))
+    try {
+        console.log(JSON.stringify(results))
+        const data = JSON.parse(results)
+        console.log('---> title', data.records[0].fields.title)
+    }catch(err) {
+        console.error('---> Error', err)
+    }
+
 
     return results
 }
