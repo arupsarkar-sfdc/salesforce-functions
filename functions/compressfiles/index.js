@@ -45,16 +45,24 @@ export default async function (event, context, logger) {
 }
 
 async function compress(url, filename) {
-    console.log('---> file url ', url)
+
     const fileURL = 'https://fun-enterprise-5282-dev-ed.cs10.my.salesforce.com'+url
+    
+    console.log('---> file url ', fileURL)
+    console.log('---> file name ', filename)    
+    
     https.get(fileURL, async (res) => {
         const file = fs.createWriteStream(filename);
-        await sharp(file)
-            .webp({quality: 20})
-            .toFile("./uploads/" + filename)
+        res.pipe(file)
+        file.on('finish', async () => {
+            await sharp(file)
+                .webp({quality: 20})
+                .toFile(filename)
         
         const link = `http://localhost:8080/${filename}` 
         console.log('---> compressed file url ', link)           
+        })
+
     })
     .on('error', (err) => {
         console.log("---> compress Error: ", err.message);
