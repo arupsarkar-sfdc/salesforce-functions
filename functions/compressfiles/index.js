@@ -12,6 +12,7 @@
  */
 import sharp from 'sharp'
 import fs from 'fs'
+import https from 'https'
  
 export default async function (event, context, logger) {
     logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`)
@@ -34,13 +35,27 @@ export default async function (event, context, logger) {
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}-${originalname}.webp`
         console.log('---> new file name ', ref)
-        await sharp(buffer)
-            .webp({quality: 20})
-            .toFile("./uploads/" + ref)
+        await compress(buffer, originalname)
     }catch(err) {
         console.error('---> Error', err)
     }
 
 
     return results
+}
+
+async function compress(url, filename) {
+    console.log('---> file url ', url)
+    https.get(url, async (res) => {
+        const file = fs.createWriteStream(filename);
+        await sharp(file)
+            .webp({quality: 20})
+            .toFile("./uploads/" + filename)
+        
+        const link = `http://localhost:8080/${filename}` 
+        console.log('---> compressed file url ', link)           
+    })
+    .on('error', (err) => {
+        console.log("---> compress Error: ", err.message);
+    })
 }
