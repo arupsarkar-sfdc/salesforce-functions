@@ -51,9 +51,10 @@ export default async function (event, context, logger) {
             })
             .then(async (response) => {
                 console.log('---> buffer body ', response.body.buffer())
-                await sharp(response.body.buffer())
+                const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
+                await sharp(input)
                     .webp({quality: 20})
-                    .toFile(`./uploads/${ref}`, (err) => {
+                    .toFile(`./outbound/${ref}`, (err) => {
                         if(err) {
                             console.log('---> error in sharp compression', err)
                         }else {
