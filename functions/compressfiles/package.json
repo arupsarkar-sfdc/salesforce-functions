@@ -21,5 +21,9 @@
     "eslint": "^6.8.0",
     "mocha": "^8.4.0",
     "sinon": "^10.0.0"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "sharp": "^0.30.3"
   }
 }

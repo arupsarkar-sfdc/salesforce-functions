@@ -10,13 +10,26 @@
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
+import sharp from 'sharp'
+import fs from 'fs'
  
 export default async function (event, context, logger) {
-    logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`);
+    logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`)
+    fs.access("./uploads", (error) => {
+        if (error) {
+          fs.mkdirSync("./uploads");
+        }
+      })
 
-    const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
+    //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
+    const results = await context.org.dataApi.query('SELECT Title, VersionData from ContentVersion')
+    const { originalname } = results.records.fields.Title
+    const { buffer } = results.records.fields.VersionData
+    const timestamp = new Date().toISOString()
+    const ref = `${timestamp}-${originalname}.webp`
+    await sharp(buffer)
+        .webp({quality: 20})
+        .toFile("./uploads/" + ref)
 
-    logger.info(JSON.stringify(results));
-
-    return results;
+    return results
 }
