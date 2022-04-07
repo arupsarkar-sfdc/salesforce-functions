@@ -85,11 +85,18 @@ export default async function (event, context, logger) {
 async function resizeImage(fileRef) {
     try{
         await sharp(fileRef)
-        .resize({
-          width: 150,
-          height: 97
-        })
-        .toFile('resized.jpg');
+                .resize({
+                    width: 150,
+                    height: 97
+                })
+                .toFile('resized.jpg')
+                    .then(info => {
+                        console.log('---> info ', info)
+                    })
+                    .catch(err => {
+                        console.err('---> error ', err)
+                    })
+
     }catch(err) {
         console.log(error)
     }
