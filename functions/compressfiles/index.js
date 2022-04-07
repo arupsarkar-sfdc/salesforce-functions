@@ -47,7 +47,7 @@ export default async function (event, context, logger) {
                         'content-type': 'application/octetstream'}})
             .then(data => {
                 console.log('---> data ', data)
-                return data.blob
+                return data.arrayBuffer()
             })
             .then(async (buffer) => {
                 console.log('---> buffer ', buffer)
