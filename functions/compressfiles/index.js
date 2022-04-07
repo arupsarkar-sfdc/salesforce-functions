@@ -37,7 +37,8 @@ export default async function (event, context, logger) {
         console.log('---> id ', data.records[0].fields.id)
         console.log('---> content document id ', data.records[0].fields.contentdocumentid)
         console.log('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
-        const fileURL = data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
+        const fileURL = context.org.domainUrl +'/'+ data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
+        console.log('---> new file url ', fileURL)
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}.webp`
         console.log('---> new file name ', ref)
