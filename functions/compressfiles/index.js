@@ -47,7 +47,7 @@ export default async function (event, context, logger) {
 async function compress(url, filename) {
     console.log('---> file url ', url)
     const fileURL = 'https://fun-enterprise-5282-dev-ed.cs10.my.salesforce.com'+url
-    https.get(url, async (res) => {
+    https.get(fileURL, async (res) => {
         const file = fs.createWriteStream(filename);
         await sharp(file)
             .webp({quality: 20})
