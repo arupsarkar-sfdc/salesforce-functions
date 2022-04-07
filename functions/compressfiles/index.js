@@ -27,10 +27,13 @@ export default async function (event, context, logger) {
     const parentId = '001J000002jkWs6IAE'
     const query = `SELECT Id, ContentDocumentId, ContentDocument.LatestPublishedVersionId, ContentDocument.LatestPublishedVersion.VersionData FROM ContentDocumentLink WHERE LinkedEntityId ='${parentId}'`
     console.log('---> query ', query)
-    const results = await context.org.dataApi.query(query)    
+    const results = await context.org.dataApi.query(query)  
+    const accessToken = await context.org.dataApi.accessToken
     try {
         console.log(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
+        console.log('---> accessToken ', accessToken)
+        console.log('---> id ', data.records[0].fields.id)
         console.log('---> id ', data.records[0].fields.id)
         console.log('---> content document id ', data.records[0].fields.contentdocumentid)
         console.log('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
