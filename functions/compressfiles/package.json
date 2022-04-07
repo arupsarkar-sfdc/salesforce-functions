@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "fs": "^0.0.1-security",
+    "node-fetch": "^3.2.3",
     "sharp": "^0.30.3"
   }
 }

@@ -13,6 +13,7 @@
 import sharp from 'sharp'
 import fs from 'fs'
 import https from 'https'
+import fetch from 'node-fetch'
  
 export default async function (event, context, logger) {
     logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`)
@@ -34,12 +35,25 @@ export default async function (event, context, logger) {
         const data = await JSON.parse(JSON.stringify(results))
         console.log('---> accessToken ', accessToken)
         console.log('---> id ', data.records[0].fields.id)
-        console.log('---> id ', data.records[0].fields.id)
         console.log('---> content document id ', data.records[0].fields.contentdocumentid)
         console.log('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
+        const fileURL = data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}.webp`
         console.log('---> new file name ', ref)
+        fetch(fileURL, { method: 'get', headers: {'Authorization' : 'Bearer ' + accessToken}})
+            .then(data => {
+                console.log('---> data ', data)
+            })
+            .then(async (buffer) => {
+                console.log('---> buffer ', buffer)
+                await sharp(buffer)
+                    .webp({quality: 20})
+                    .toFile(ref)                
+            })
+            .catch(err => {
+                console.error("---> fetch error: " + err);
+            })
         //await compress(data.records[0].fields.versiondata, originalname)
     }catch(err) {
         console.error('---> Error', err)
