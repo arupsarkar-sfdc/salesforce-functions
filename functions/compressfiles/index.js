@@ -42,10 +42,12 @@ export default async function (event, context, logger) {
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}.webp`
         console.log('---> new file name ', ref)
-        fetch(fileURL, { method: 'get', headers: {'Authorization' : 'Bearer ' + accessToken}})
+        fetch(fileURL, { method: 'get', headers: {
+                        'Authorization' : 'Bearer ' + accessToken,
+                        'content-type': 'application/octetstream'}})
             .then(data => {
                 console.log('---> data ', data)
-                return data.createWriteStream
+                return data.blob
             })
             .then(async (buffer) => {
                 console.log('---> buffer ', buffer)
