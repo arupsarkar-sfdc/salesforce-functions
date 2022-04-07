@@ -23,18 +23,21 @@ export default async function (event, context, logger) {
       })
 
     //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
-    const results = await context.org.dataApi.query('SELECT Title, VersionData from ContentVersion')
+    
     
     try {
+        const parentId = '001J000002jkWs6IAE'
+        const query = `SELECT Id, ContentDocumentId, ContentDocument.LatestPublishedVersionId, ContentDocument.LatestPublishedVersion.VersionData FROM ContentDocumentLink WHERE LinkedEntityId ='001J000002jkWs6IAE'`
+        const results = await context.org.dataApi.query(query)
+
         console.log(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
-        console.log('---> title ', data.records[0].fields.title)
-        console.log('---> version data ', data.records[0].fields.versiondata)
-        const originalname = data.records[0].fields.title + ' - modified.webp'
+        console.log('---> id ', data.records[0].fields.id)
+        console.log('---> content document id ', data.records[0].fields.contentdocumentid)
         const timestamp = new Date().toISOString()
-        //const ref = `${timestamp}-${originalname}.webp`
-        console.log('---> new file name ', originalname)
-        await compress(data.records[0].fields.versiondata, originalname)
+        const ref = `${timestamp}.webp`
+        console.log('---> new file name ', ref)
+        //await compress(data.records[0].fields.versiondata, originalname)
     }catch(err) {
         console.error('---> Error', err)
     }
