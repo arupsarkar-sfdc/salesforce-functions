@@ -27,9 +27,10 @@ export default async function (event, context, logger) {
     try {
         console.log(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
-        console.log('---> title', data.records[0].fields.title)
+        console.log('---> title ', data.records[0].fields.title)
+        console.log('---> version data ', data.records[0].fields.title)
         const { originalname } = data.records[0].fields.title
-        const { buffer } = data.records[0].fields.VersionData
+        const { buffer } = data.records[0].fields.versiondata
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}-${originalname}.webp`
         await sharp(buffer)
