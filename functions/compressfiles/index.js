@@ -91,7 +91,7 @@ async function resizeImage(fileRef) {
                 })
                 .toBuffer()
                     .then(data => {
-                        fs.createWriteStream('./outbound').write(data.buffer)
+                        fs.createWriteStream('/outbound').write(data.buffer)
                     })
                     .catch(err => {
                         console.err(err)
