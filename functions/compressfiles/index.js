@@ -49,18 +49,21 @@ export default async function (event, context, logger) {
                 console.log('---> data ', data)
                 return data
             })
-            .then(async (buffer) => {
-                console.log('---> buffer ', buffer.body)
-                await sharp(buffer.body)
+            .then(async (response) => {
+                console.log('---> buffer ', response.body)
+                await sharp(response.body.buffer)
                     .webp({quality: 20})
                     .toFile(`./uploads/${ref}`, (err) => {
                         if(err) {
                             console.log('---> error in sharp compression', err)
+                        }else {
+                            console.log('---> compressed success')
+                            const link = `http://localhost:8080/${ref}`
+                            console.log('---> compressed image link ', link)                            
                         }
                     }) 
-                console.log('---> compressed success')
-                const link = `http://localhost:8080/${ref}`
-                console.log('---> compressed image link ', link)
+                
+
             })
             .catch(err => {
                 console.error("---> fetch error: " + err);
