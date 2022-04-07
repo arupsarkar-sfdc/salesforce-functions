@@ -89,18 +89,14 @@ async function resizeImage(fileRef) {
                     width: 150,
                     height: 97
                 })
-                .toFile('./outbound/resized.jpg')
-                    .then(info => {
-                        console.log('---> info ', info)
-                        fs.appendFile('./outbound/resized.jpg', function (err) {
-                            if (err) throw err;
-                            console.log('File is created successfully.');
-                          })                        
-
+                .toBuffer()
+                    .then(data => {
+                        fs.createWriteStream('./outbound').write(data.buffer)
                     })
                     .catch(err => {
-                        console.err('---> error ', err)
-                    })
+                        console.err(err)
+                    }) 
+
 
     }catch(err) {
         console.log(error)
