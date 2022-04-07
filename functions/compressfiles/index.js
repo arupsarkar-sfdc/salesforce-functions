@@ -30,12 +30,11 @@ export default async function (event, context, logger) {
         const data = await JSON.parse(JSON.stringify(results))
         console.log('---> title ', data.records[0].fields.title)
         console.log('---> version data ', data.records[0].fields.versiondata)
-        const { originalname } = data.records[0].fields.title
-        const { buffer } = data.records[0].fields.versiondata
+        const originalname = data.records[0].fields.title + ' - modified.webp'
         const timestamp = new Date().toISOString()
-        const ref = `${timestamp}-${originalname}.webp`
-        console.log('---> new file name ', ref)
-        await compress(data.records[0].fields.versiondata, ref)
+        //const ref = `${timestamp}-${originalname}.webp`
+        console.log('---> new file name ', originalname)
+        await compress(data.records[0].fields.versiondata, originalname)
     }catch(err) {
         console.error('---> Error', err)
     }
