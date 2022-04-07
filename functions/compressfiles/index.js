@@ -35,7 +35,7 @@ export default async function (event, context, logger) {
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}-${originalname}.webp`
         console.log('---> new file name ', ref)
-        await compress(buffer, originalname)
+        await compress(data.records[0].fields.versiondata, ref)
     }catch(err) {
         console.error('---> Error', err)
     }
@@ -46,6 +46,7 @@ export default async function (event, context, logger) {
 
 async function compress(url, filename) {
     console.log('---> file url ', url)
+    const fileURL = 'https://fun-enterprise-5282-dev-ed.cs10.my.salesforce.com'+url
     https.get(url, async (res) => {
         const file = fs.createWriteStream(filename);
         await sharp(file)
