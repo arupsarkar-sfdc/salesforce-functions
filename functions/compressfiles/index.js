@@ -92,6 +92,11 @@ async function resizeImage(fileRef) {
                 .toFile('./outbound/resized.jpg')
                     .then(info => {
                         console.log('---> info ', info)
+                        fs.appendFile('./outbound/resized.jpg', function (err) {
+                            if (err) throw err;
+                            console.log('File is created successfully.');
+                          })                        
+
                     })
                     .catch(err => {
                         console.err('---> error ', err)
