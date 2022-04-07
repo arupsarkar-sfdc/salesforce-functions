@@ -89,7 +89,7 @@ async function resizeImage(fileRef) {
                     width: 150,
                     height: 97
                 })
-                .toFile('resized.jpg')
+                .toFile('./outbound/resized.jpg')
                     .then(info => {
                         console.log('---> info ', info)
                     })
