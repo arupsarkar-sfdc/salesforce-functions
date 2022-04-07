@@ -23,17 +23,18 @@ export default async function (event, context, logger) {
 
     //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
     const results = await context.org.dataApi.query('SELECT Title, VersionData from ContentVersion')
-    const { originalname } = results.records[0].fields.title
-    // const { buffer } = results.records.fields.VersionData
-    // const timestamp = new Date().toISOString()
-    // const ref = `${timestamp}-${originalname}.webp`
-    // await sharp(buffer)
-    //     .webp({quality: 20})
-    //     .toFile("./uploads/" + ref)
+    
     try {
         console.log(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
         console.log('---> title', data.records[0].fields.title)
+        const { originalname } = data.records[0].fields.title
+        const { buffer } = data.records[0].fields.VersionData
+        const timestamp = new Date().toISOString()
+        const ref = `${timestamp}-${originalname}.webp`
+        await sharp(buffer)
+            .webp({quality: 20})
+            .toFile("./uploads/" + ref)
     }catch(err) {
         console.error('---> Error', err)
     }
