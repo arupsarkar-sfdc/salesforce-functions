@@ -45,6 +45,7 @@ export default async function (event, context, logger) {
         fetch(fileURL, { method: 'get', headers: {'Authorization' : 'Bearer ' + accessToken}})
             .then(data => {
                 console.log('---> data ', data)
+                return data.createWriteStream
             })
             .then(async (buffer) => {
                 console.log('---> buffer ', buffer)
