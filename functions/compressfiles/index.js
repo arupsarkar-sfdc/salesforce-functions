@@ -54,8 +54,8 @@ export default async function (event, context, logger) {
                 const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
                 const metadata = await getMetadata(input)
                 console.log('---> returned meta data ', metadata)
-                const resizeImage = await resizeImage(input)
-                
+                const result = await resizeImage(input)
+
                 // await sharp(input)
                 //     .webp({quality: 20})
                 //     .toFile(`./outbound/${ref}`, (err) => {
