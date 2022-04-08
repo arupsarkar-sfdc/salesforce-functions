@@ -91,7 +91,9 @@ async function resizeImage(fileRef) {
                 })
                 .toBuffer()
                     .then(data => {
-                        fs.createWriteStream().write(data.buffer)
+                        const fd = fs.openSync("/outbound", "r");
+                        fs.fchmodSync(fd, 0o777);                        
+                        fs.createWriteStream('/outbound/modified-file.jpg').write(data.buffer)
                     })
                     .catch(err => {
                         console.err(err)
