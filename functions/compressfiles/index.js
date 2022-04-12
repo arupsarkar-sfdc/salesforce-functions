@@ -12,125 +12,75 @@
  */
 import sharp from 'sharp'
 import fs from 'fs'
-import https from 'https'
-import fetch from 'node-fetch'
+// import https from 'https'
+// import fetch from 'node-fetch'
 // import { request } from 'http'
 import request from 'request'
  
 export default async function (event, context, logger) {
     logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`)
-    fs.access("./uploads", (error) => {
-        if (error) {
-          fs.mkdirSync("./uploads");
-        }
-      })
-
     //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
-    
     const parentId = '001J000002jkWs6IAE'
     const query = `SELECT Id, ContentDocumentId, ContentDocument.LatestPublishedVersionId, ContentDocument.LatestPublishedVersion.VersionData FROM ContentDocumentLink WHERE LinkedEntityId ='${parentId}'`
-    console.log('---> query ', query)
+    logger.info('---> query ', query)
     const results = await context.org.dataApi.query(query)  
     const accessToken = await context.org.dataApi.accessToken
     try {
-        console.log(JSON.stringify(results))
+        logger.info(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
-        console.log('---> accessToken ', accessToken)
-        console.log('---> id ', data.records[0].fields.id)
-        console.log('---> content document id ', data.records[0].fields.contentdocumentid)
-        console.log('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
+        logger.info('---> accessToken ', accessToken)
+        logger.info('---> id ', data.records[0].fields.id)
+        logger.info('---> content document id ', data.records[0].fields.contentdocumentid)
+        logger.info('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
         const fileURL = context.org.domainUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
-        console.log('---> new file url ', fileURL)
+        logger.info('---> new file url ', fileURL)
         const timestamp = new Date().toISOString()
-        const ref = `${timestamp}.webp`
-        console.log('---> new file name ', ref)
+        const ref = `${timestamp}.jpg`
+        logger.info('---> new file name ', ref)
 
         const fileInput = context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
         await request
             .get(
-                context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
+                fileInput
             )
-            .auth(null, null, true, context.org.dataApi.accessToken)
+            .auth(null, null, true, accessToken)
             .on("error", (err) => {
                 if(err){
-                    console.log("Exception : ", err)
+                    logger.info("Exception : ", err)
                 }
             })
             .pipe(
-                await fs.createWriteStream('./modified.jpg', { encoding: "utf8" })
-                // await sharp(fileInput)
-                //     .webp({quality: 50})
-                //     .toFile('./outbound/output.jpg')
-                //         .then(info => {
-                //             console.log('---> sharp info ', info)
-                //             fs.createWriteStream("./outbound/modified.jpg", { encoding: "utf8" })
-                //         })
-                //         .catch(err => {
-                //             if(err) {
-                //                 console.log('---> sharp error  ', err)
-                //             }
-                //         })
-
-                            
+                fs.createWriteStream(`./processing/${ref}`, { encoding: "utf8" })
+                    .then(info => {
+                        logger.info('---> create stream ',info)
+                    })
+                    .catch(error => {
+                        logger.error('---> create stream ',error)
+                    })
             )
-            .on("finish", async (data) => {
-                await sharp('./inbound/kate-laine-aqMloFwABoc-unsplash.jpg')
+            .on('finish', async (data) => {
+                logger.info('---> finish data ', data)
+                await sharp(`./processing/${ref}`)
                     .webp({quality: 20})
-                    .toFile('./modified2.jpg')
+                    .toFile(`./outbound/${timestamp} + .webp`)
                         .then((info) => {
-                            console.log('---> sharp info ', info)
+                            logger.info('---> sharp info ', info)
                         })
                         .catch(err => {
-                            console.log('---> sharp err ', err)
+                            logger.info('---> sharp err ', err)
                         })
-                console.log("---> process finished ", data)
+                logger.info("---> process finished ", data)
             })
-
-        // fetch(fileURL, { method: 'get', headers: {
-        //                 'Authorization' : 'Bearer ' + accessToken,
-        //                 'content-type': 'application/octetstream'}})
-        //     .then(data => {
-        //         console.log('---> data ', data)
-        //         return data
-        //     })
-        //     .then(async (response) => {
-        //         console.log('---> buffer body ', response.body)
-        //         const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
-        //         const metadata = await getMetadata(input)
-        //         console.log('---> returned meta data ', metadata)
-        //         const result = await compressImage(data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData,
-        //                                 context,
-        //                                 logger)
-        //         // const result = await resizeImage(input)
-
-        //         // await sharp(input)
-        //         //     .webp({quality: 20})
-        //         //     .toFile(`./outbound/${ref}`, (err) => {
-        //         //         if(err) {
-        //         //             console.log('---> error in sharp compression', err)
-        //         //         }else {
-        //         //             console.log('---> compressed success')
-        //         //             const link = `http://localhost:8080/${ref}`
-        //         //             console.log('---> compressed image link ', link)                            
-        //         //         }
-        //         //     }) 
-                
-
-        //     })
-        //     .catch(err => {
-        //         console.error("---> fetch error: " + err);
-        //     })
-        //await compress(data.records[0].fields.versiondata, originalname)
     }catch(err) {
-        console.error('---> Error', err)
+        logger.info('---> Error', err)
     }
 
 
     return results
 }
-
+// helper methods below - ignore
 async function compressImage(fileRef, context, logger) {
-    console.log('---> version data ', fileRef)
+    logger.info('---> version data ', fileRef)
     await request
         .get(
             context.org.baseUrl + fileRef
@@ -138,72 +88,26 @@ async function compressImage(fileRef, context, logger) {
         .auth(null, null, true, context.org.dataApi.accessToken)
         .on("error", (err) => {
             if(err){
-                console.log("Exception : ", err)
+                logger.info("Exception : ", err)
             }
         })
         .pipe(
             fs.createWriteStream("./output/modified.jpg", { encoding: "utf8" })            
         )
         .on("finish", (data) => {
-            console.log("---> process finished ", data)
+            logger.info("---> process finished ", data)
         })
 
-}
-
-async function resizeImage(fileRef) {
-    try{
-        await sharp(fileRef)
-                .resize({
-                    width: 150,
-                    height: 97
-                })
-                .toBuffer()
-                    .then(data => {
-                        const fd = fs.openSync("/outbound", "r");
-                        fs.fchmodSync(fd, 0o777);                        
-                        fs.createWriteStream('/outbound/modified-file.jpg').write(data.buffer)
-                    })
-                    .catch(err => {
-                        console.err(err)
-                    }) 
-
-
-    }catch(err) {
-        console.log(error)
-    }
 }
 
 async function getMetadata(fileRef) {
     try {
       const metadata = await sharp(fileRef).metadata();
-      console.log('---> inside function ', metadata);
+      logger.info('---> inside function ', metadata);
       return metadata
     } catch (error) {
-      console.log(`An error occurred during processing: ${error}`);
+      logger.info(`An error occurred during processing: ${error}`);
     }
 }
 
-async function compress(url, filename) {
 
-    const fileURL = 'https://fun-enterprise-5282-dev-ed.cs10.my.salesforce.com'+url
-    
-    console.log('---> file url ', fileURL)
-    console.log('---> file name ', filename)    
-    
-    https.get(fileURL, async (res) => {
-        const file = fs.createWriteStream(filename);
-        res.pipe(file)
-        file.on('finish', async () => {
-            await sharp(file)
-                .webp({quality: 20})
-                .toFile(filename)
-        
-        const link = `http://localhost:8080/${filename}` 
-        console.log('---> compressed file url ', link)           
-        })
-
-    })
-    .on('error', (err) => {
-        console.log("---> compress Error: ", err.message);
-    })
-}
