@@ -73,7 +73,16 @@ export default async function (event, context, logger) {
 
                             
             )
-            .on("finish", (data) => {
+            .on("finish", async (data) => {
+                await sharp('./inbound/kate-laine-aqMloFwABoc-unsplash.jpg')
+                    .webp({quality: 20})
+                    .toFile('./outbound/modified2.jpg')
+                        .then((info) => {
+                            console.log('---> sharp info ', info)
+                        })
+                        .catch(err => {
+                            console.log('---> sharp err ', err)
+                        })
                 console.log("---> process finished ", data)
             })
 
