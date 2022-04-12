@@ -57,7 +57,7 @@ export default async function (event, context, logger) {
                 }
             })
             .pipe(
-                await fs.createWriteStream('modified.jpg', { encoding: "utf8" })
+                await fs.createWriteStream('./modified.jpg', { encoding: "utf8" })
                 // await sharp(fileInput)
                 //     .webp({quality: 50})
                 //     .toFile('./outbound/output.jpg')
@@ -76,7 +76,7 @@ export default async function (event, context, logger) {
             .on("finish", async (data) => {
                 await sharp('./inbound/kate-laine-aqMloFwABoc-unsplash.jpg')
                     .webp({quality: 20})
-                    .toFile('modified2.jpg')
+                    .toFile('./modified2.jpg')
                         .then((info) => {
                             console.log('---> sharp info ', info)
                         })
