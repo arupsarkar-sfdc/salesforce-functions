@@ -54,7 +54,8 @@ export default async function (event, context, logger) {
                 const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
                 const metadata = await getMetadata(input)
                 console.log('---> returned meta data ', metadata)
-                const result = await resizeImage(input)
+                const result = await compressImage(data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
+                // const result = await resizeImage(input)
 
                 // await sharp(input)
                 //     .webp({quality: 20})
@@ -80,6 +81,10 @@ export default async function (event, context, logger) {
 
 
     return results
+}
+
+async function compressImage(fileRef) {
+    console.log('---> version data ', fileRef)
 }
 
 async function resizeImage(fileRef) {
