@@ -45,7 +45,7 @@ export default async function (event, context, logger) {
         const ref = `${timestamp}.webp`
         console.log('---> new file name ', ref)
 
-
+        const fileInput = context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
         await request
             .get(
                 context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
@@ -57,7 +57,20 @@ export default async function (event, context, logger) {
                 }
             })
             .pipe(
-                fs.createWriteStream("./outbound/modified.jpg", { encoding: "utf8" })            
+                await sharp(fileInput)
+                    .webp({quality: 50})
+                    .toFile('./outbound/output.jpg')
+                        .then(info => {
+                            console.log('---> sharp info ', info)
+                            // fs.createWriteStream("./outbound/modified.jpg", { encoding: "utf8" })
+                        })
+                        .catch(err => {
+                            if(err) {
+                                console.log('---> sharp error  ', err)
+                            }
+                        })
+
+                            
             )
             .on("finish", (data) => {
                 console.log("---> process finished ", data)
