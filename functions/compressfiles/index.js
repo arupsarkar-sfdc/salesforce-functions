@@ -15,7 +15,7 @@ import fs from 'fs'
 import https from 'https'
 import fetch from 'node-fetch'
 // import { request } from 'http'
-import { request } from 'request'
+import request from 'request'
  
 export default async function (event, context, logger) {
     logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`)
