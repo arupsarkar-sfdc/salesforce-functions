@@ -57,18 +57,19 @@ export default async function (event, context, logger) {
                 }
             })
             .pipe(
-                await sharp(fileInput)
-                    .webp({quality: 50})
-                    .toFile('./outbound/output.jpg')
-                        .then(info => {
-                            console.log('---> sharp info ', info)
-                            // fs.createWriteStream("./outbound/modified.jpg", { encoding: "utf8" })
-                        })
-                        .catch(err => {
-                            if(err) {
-                                console.log('---> sharp error  ', err)
-                            }
-                        })
+                await fs.createWriteStream("./outbound/modified.jpg", { encoding: "utf8" })
+                // await sharp(fileInput)
+                //     .webp({quality: 50})
+                //     .toFile('./outbound/output.jpg')
+                //         .then(info => {
+                //             console.log('---> sharp info ', info)
+                //             fs.createWriteStream("./outbound/modified.jpg", { encoding: "utf8" })
+                //         })
+                //         .catch(err => {
+                //             if(err) {
+                //                 console.log('---> sharp error  ', err)
+                //             }
+                //         })
 
                             
             )
