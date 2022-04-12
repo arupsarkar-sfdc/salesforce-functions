@@ -14,6 +14,7 @@ import sharp from 'sharp'
 import fs from 'fs'
 import https from 'https'
 import fetch from 'node-fetch'
+import { request } from 'http'
  
 export default async function (event, context, logger) {
     logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`)
@@ -84,7 +85,24 @@ export default async function (event, context, logger) {
 }
 
 async function compressImage(fileRef) {
-    console.log('---> version data ', fileRef)
+    logger.log('---> version data ', fileRef)
+    await request
+        .get(
+            context.org.baseUrl + fileRef
+        )
+        .auth(null, null, true, context.org.dataApi.accessToken)
+        .on("error", (err) => {
+            if(err){
+                logger.info("Exception : ", err)
+            }
+        })
+        .pipe(
+            fs.createWriteStream("./output/modified.jpg", { encoding: "utf8" })            
+        )
+        .on("finish", (data) => {
+            logger.info("---> process finished ", data)
+        })
+
 }
 
 async function resizeImage(fileRef) {
