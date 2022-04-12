@@ -64,7 +64,7 @@ export default async function (event, context, logger) {
                     .webp({quality: 20})
                     .toFile(`./outbound/${timestamp} + .webp`)
                         .then((info) => {
-                            logger.info(`Sharp Image Info: ${info}`)
+                            logger.info(`Sharp Image Info: ${JSON.stringify(info)}`)
                         })
                         .catch(err => {
                             logger.info(`Sharp Image Exception: ${err.message}`)
