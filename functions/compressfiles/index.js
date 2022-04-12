@@ -51,12 +51,13 @@ export default async function (event, context, logger) {
             })
             .pipe(
                 fs.createWriteStream(`./processing/${ref}`, { encoding: "utf8" })
-                    .then(info => {
-                        logger.info(`fs.createWriteStream() Info: ${info}`)
+                    .on('error', error => {
+                        if(error) {
+                            logger.info(`Error in create stream : ${error.message}`)
+                        }else {
+                            logger.info(`Success`)
+                        }
                     })
-                    .catch(error => {
-                        logger.error(`fs.createWriteStream() Error: ${error}`)
-                    })                
             )
             .on('finish', async(data) => {
                 logger.info(`Finish: ${data}`)
