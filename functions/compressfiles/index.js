@@ -29,12 +29,11 @@ export default async function (event, context, logger) {
         logger.info(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
         logger.info(`Access Token : ${accessToken}`)
-        logger.info(`DCata : ${data}`)
-        // logger.info('---> id ', data.records[0].fields.id)
-        // logger.info('---> content document id ', data.records[0].fields.contentdocumentid)
-        // logger.info('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
-        // const fileURL = context.org.domainUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
-        // logger.info('---> new file url ', fileURL)
+        logger.info(`Id: ${data.records[0].fields.id}`)
+        logger.info(`Content document id ${data.records[0].fields.contentdocumentid}`)
+        logger.info(`Content Version URL ${data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData}`)
+        const fileURL = context.org.domainUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
+        logger.info(`File URL : ${fileURL}`)
         // const timestamp = new Date().toISOString()
         // const ref = `${timestamp}.jpg`
         // logger.info('---> new file name ', ref)
