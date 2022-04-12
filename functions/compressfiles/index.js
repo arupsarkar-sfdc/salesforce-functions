@@ -22,57 +22,58 @@ export default async function (event, context, logger) {
     //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
     const parentId = '001J000002jkWs6IAE'
     const query = `SELECT Id, ContentDocumentId, ContentDocument.LatestPublishedVersionId, ContentDocument.LatestPublishedVersion.VersionData FROM ContentDocumentLink WHERE LinkedEntityId ='${parentId}'`
-    logger.info('---> query ', query)
+    logger.info(`Query -> ${query}`)
     const results = await context.org.dataApi.query(query)  
     const accessToken = await context.org.dataApi.accessToken
     try {
         logger.info(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
-        logger.info('---> accessToken ', accessToken)
-        logger.info('---> id ', data.records[0].fields.id)
-        logger.info('---> content document id ', data.records[0].fields.contentdocumentid)
-        logger.info('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
-        const fileURL = context.org.domainUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
-        logger.info('---> new file url ', fileURL)
-        const timestamp = new Date().toISOString()
-        const ref = `${timestamp}.jpg`
-        logger.info('---> new file name ', ref)
+        logger.info(`Access Token : ${accessToken}`)
+        logger.info(`DCata : ${data}`)
+        // logger.info('---> id ', data.records[0].fields.id)
+        // logger.info('---> content document id ', data.records[0].fields.contentdocumentid)
+        // logger.info('---> content version data ', data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData)
+        // const fileURL = context.org.domainUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
+        // logger.info('---> new file url ', fileURL)
+        // const timestamp = new Date().toISOString()
+        // const ref = `${timestamp}.jpg`
+        // logger.info('---> new file name ', ref)
 
-        const fileInput = context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
-        await request
-            .get(
-                fileInput
-            )
-            .auth(null, null, true, accessToken)
-            .on("error", (err) => {
-                if(err){
-                    logger.info("Exception : ", err)
-                }
-            })
-            .pipe(
-                fs.createWriteStream(`./processing/${ref}`, { encoding: "utf8" })
-                    .then(info => {
-                        logger.info('---> create stream ',info)
-                    })
-                    .catch(error => {
-                        logger.error('---> create stream ',error)
-                    })
-            )
-            .on('finish', async (data) => {
-                logger.info('---> finish data ', data)
-                await sharp(`./processing/${ref}`)
-                    .webp({quality: 20})
-                    .toFile(`./outbound/${timestamp} + .webp`)
-                        .then((info) => {
-                            logger.info('---> sharp info ', info)
-                        })
-                        .catch(err => {
-                            logger.info('---> sharp err ', err)
-                        })
-                logger.info("---> process finished ", data)
-            })
+        // const fileInput = context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
+        // await request
+        //     .get(
+        //         fileInput
+        //     )
+        //     .auth(null, null, true, accessToken)
+        //     .on("error", (err) => {
+        //         if(err){
+        //             logger.info("Exception : ", err)
+        //         }
+        //     })
+        //     .pipe(
+        //         fs.createWriteStream(`./processing/${ref}`, { encoding: "utf8" })
+        //             .then(info => {
+        //                 logger.info('---> create stream ',info)
+        //             })
+        //             .catch(error => {
+        //                 logger.error('---> create stream ',error)
+        //             })
+        //     )
+        //     .on('finish', async (data) => {
+        //         logger.info('---> finish data ', data)
+        //         await sharp(`./processing/${ref}`)
+        //             .webp({quality: 20})
+        //             .toFile(`./outbound/${timestamp} + .webp`)
+        //                 .then((info) => {
+        //                     logger.info('---> sharp info ', info)
+        //                 })
+        //                 .catch(err => {
+        //                     logger.info('---> sharp err ', err)
+        //                 })
+        //         logger.info("---> process finished ", data)
+        //     })
     }catch(err) {
-        logger.info('---> Error', err)
+        logger.info(`Exception : ${err}`)
     }
 
 
