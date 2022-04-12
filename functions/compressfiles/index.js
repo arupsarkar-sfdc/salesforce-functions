@@ -85,7 +85,7 @@ export default async function (event, context, logger) {
 }
 
 async function compressImage(fileRef) {
-    logger.log('---> version data ', fileRef)
+    console.log('---> version data ', fileRef)
     await request
         .get(
             context.org.baseUrl + fileRef
@@ -93,14 +93,14 @@ async function compressImage(fileRef) {
         .auth(null, null, true, context.org.dataApi.accessToken)
         .on("error", (err) => {
             if(err){
-                logger.info("Exception : ", err)
+                console.log("Exception : ", err)
             }
         })
         .pipe(
             fs.createWriteStream("./output/modified.jpg", { encoding: "utf8" })            
         )
         .on("finish", (data) => {
-            logger.info("---> process finished ", data)
+            console.log("---> process finished ", data)
         })
 
 }
