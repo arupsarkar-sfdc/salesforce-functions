@@ -14,7 +14,8 @@ import sharp from 'sharp'
 import fs from 'fs'
 import https from 'https'
 import fetch from 'node-fetch'
-import { request } from 'http'
+// import { request } from 'http'
+import { request } from 'request'
  
 export default async function (event, context, logger) {
     logger.info(`Invoking Compressfiles with payload ${JSON.stringify(event.data || {})}`)
@@ -43,40 +44,59 @@ export default async function (event, context, logger) {
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}.webp`
         console.log('---> new file name ', ref)
-        fetch(fileURL, { method: 'get', headers: {
-                        'Authorization' : 'Bearer ' + accessToken,
-                        'content-type': 'application/octetstream'}})
-            .then(data => {
-                console.log('---> data ', data)
-                return data
-            })
-            .then(async (response) => {
-                console.log('---> buffer body ', response.body)
-                const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
-                const metadata = await getMetadata(input)
-                console.log('---> returned meta data ', metadata)
-                const result = await compressImage(data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData,
-                                        context,
-                                        logger)
-                // const result = await resizeImage(input)
 
-                // await sharp(input)
-                //     .webp({quality: 20})
-                //     .toFile(`./outbound/${ref}`, (err) => {
-                //         if(err) {
-                //             console.log('---> error in sharp compression', err)
-                //         }else {
-                //             console.log('---> compressed success')
-                //             const link = `http://localhost:8080/${ref}`
-                //             console.log('---> compressed image link ', link)                            
-                //         }
-                //     }) 
+
+        await request
+            .get(
+                context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
+            )
+            .auth(null, null, true, context.org.dataApi.accessToken)
+            .on("error", (err) => {
+                if(err){
+                    console.log("Exception : ", err)
+                }
+            })
+            .pipe(
+                fs.createWriteStream("./output/modified.jpg", { encoding: "utf8" })            
+            )
+            .on("finish", (data) => {
+                console.log("---> process finished ", data)
+            })
+
+        // fetch(fileURL, { method: 'get', headers: {
+        //                 'Authorization' : 'Bearer ' + accessToken,
+        //                 'content-type': 'application/octetstream'}})
+        //     .then(data => {
+        //         console.log('---> data ', data)
+        //         return data
+        //     })
+        //     .then(async (response) => {
+        //         console.log('---> buffer body ', response.body)
+        //         const input = './inbound/kate-laine-aqMloFwABoc-unsplash.jpg'
+        //         const metadata = await getMetadata(input)
+        //         console.log('---> returned meta data ', metadata)
+        //         const result = await compressImage(data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData,
+        //                                 context,
+        //                                 logger)
+        //         // const result = await resizeImage(input)
+
+        //         // await sharp(input)
+        //         //     .webp({quality: 20})
+        //         //     .toFile(`./outbound/${ref}`, (err) => {
+        //         //         if(err) {
+        //         //             console.log('---> error in sharp compression', err)
+        //         //         }else {
+        //         //             console.log('---> compressed success')
+        //         //             const link = `http://localhost:8080/${ref}`
+        //         //             console.log('---> compressed image link ', link)                            
+        //         //         }
+        //         //     }) 
                 
 
-            })
-            .catch(err => {
-                console.error("---> fetch error: " + err);
-            })
+        //     })
+        //     .catch(err => {
+        //         console.error("---> fetch error: " + err);
+        //     })
         //await compress(data.records[0].fields.versiondata, originalname)
     }catch(err) {
         console.error('---> Error', err)
