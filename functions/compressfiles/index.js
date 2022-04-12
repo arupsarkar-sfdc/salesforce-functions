@@ -57,7 +57,7 @@ export default async function (event, context, logger) {
                 }
             })
             .pipe(
-                fs.createWriteStream("./output/modified.jpg", { encoding: "utf8" })            
+                fs.createWriteStream("./outbound/modified.jpg", { encoding: "utf8" })            
             )
             .on("finish", (data) => {
                 console.log("---> process finished ", data)
