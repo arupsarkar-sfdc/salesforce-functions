@@ -39,6 +39,28 @@ export default async function (event, context, logger) {
         logger.info(`filename: ${ref}`)
         const fileInput = context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
         logger.info(`Base File URL: ${fileInput}`)        
+        await request
+            .get(
+                fileInput
+            )
+            .auth(null, null, true, accessToken)
+            .on('error', (err) => {
+                if(err){
+                    logger.info(`Auth Error: ${err}`)        
+                }
+            })
+            .pipe(
+                fs.createWriteStream(`./processing/${ref}`, { encoding: "utf8" })
+                    .then(info => {
+                        logger.info(`fs.createWriteStream() Info: ${info}`)
+                    })
+                    .catch(error => {
+                        logger.error(`fs.createWriteStream() Error: ${error}`)
+                    })                
+            )
+            .on('finish', async(data) => {
+                logger.info(`Finish: ${data}`)
+            })
         // await request
         //     .get(
         //         fileInput
