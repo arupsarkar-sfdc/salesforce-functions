@@ -86,23 +86,24 @@ export default async function (event, context, logger) {
                         promisedParseJSON(JSON.stringify(contentDocResults))
                             .then(info => {
                                 logger.info(info.records[0].fields.contentdocumentid)
+                                createContentDocumentLink(info.records[0].fields.contentdocumentid, 
+                                        parentId,
+                                        context,
+                                        accessToken,
+                                        logger)
+                                        .then(info => {
+                                            logger.info(JSON.stringify(info))
+                                        })
+                                        .catch(error => {
+                                            logger.info(error)
+                                        })                                
                             })
                             .catch(error => {
                                 logger.info(`Exception: ${error.message}`)
                             })
                         //logger.info(`${cvData.records[0].contentdocumentid}`)
                         
-                        // createContentDocumentLink(cvData.records[0].contentdocumentid, 
-                        //         parentId,
-                        //         context,
-                        //         accessToken,
-                        //         logger)
-                        //         .then(info => {
-                        //             logger.info(JSON.stringify(info))
-                        //         })
-                        //         .catch(error => {
-                        //             logger.info(error)
-                        //         })
+
                     })
                     .catch(error => {
                         logger.info(`${error}`)
