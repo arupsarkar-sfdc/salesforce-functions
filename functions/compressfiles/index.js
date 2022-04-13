@@ -67,12 +67,13 @@ export default async function (event, context, logger) {
                 //logger.info(`Reduced File Buffer: ${fileBuffer}`)
                 //write to contentversion
                 const userId = '005J000000EvrkhIAB'
+                const versionData = fileBuffer.toString('base64')
                 const body = {
                     'Title': `${timestamp}`,
                     'PathOnClient': `${timestamp} + .webp`,
                     'ContentLocation': 'S',
                     'OwnerId': userId,
-                    'VersionData': fileBuffer
+                    'VersionData': versionData
                 }
                 const response = await fetch(context.org.baseUrl + '/services/data/v53.0/sobjects/ContentVersion',
                                                                         {
