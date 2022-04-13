@@ -76,13 +76,48 @@ export default async function (event, context, logger) {
                                                                             }
                                                                         })
                 const cvData = await response.json()
-                logger.info(`ContentVersion Response:${JSON.stringify(cvData)}`)
+                logger.info(`ContentVersion Id :${cvData[0].id}`)
+                logger.info(`ContentVersion Status :${cvData[0].success}`)
+                logger.info(`ContentVersion Errors :${JSON.stringify(cvData[0].errors)}`)
+
+                //attachh the file to the parent linked id
+                //1. Query ContentVersion to get ContentDocumentId
+                const contentDocQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${cvData[0].id}'`
+                const contentDocResults = await context.org.dataApi.query(contentDocQuery) 
+                logger.info(`ContentVersion Query Results :${JSON.stringify(contentDocResults)}`)
+                logger.info(`${contentDocResults.records[0].contentdocumentid}`)
+                const contentDocStatus = await createContentDocumentLink(contentDocResults.records[0].contentdocumentid, 
+                        parentId,
+                        context,
+                        accessToken)
+                logger.info(`${contentDocStatus}`)
                 return JSON.stringify(cvData)
             })
     }catch(err) {
         logger.info(`Exception : ${err}`)
     }
 }
+
+async function createContentDocumentLink(docId, linkedId, context, accessToken) {
+    const body = {
+        'ContentDocumentId': `${docId}`,
+        'LinkedEntityId': `${linkedId}`,
+        'Visibility': 'AllUsers'
+    }
+    const response = await fetch(context.org.baseUrl + '/services/data/v53.0/sobjects/ContentDocumentLink',
+    {
+        method: 'post',
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    const contentDocLinkData = await response.json()   
+    logger.info(`${contentDocLinkData}`) 
+    return contentDocLinkData
+}
+
 // helper methods below - ignore
 async function getMetadata(fileRef) {
     try {
