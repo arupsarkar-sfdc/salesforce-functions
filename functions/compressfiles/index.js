@@ -85,10 +85,18 @@ export default async function (event, context, logger) {
                         logger.info(`ContentVersion Query Results :${JSON.stringify(contentDocResults)}`)
                         const cvData = await JSON.parse(JSON.stringify(contentDocResults))
                         logger.info(`${cvData.records[0].contentdocumentid}`)
-                        const contentDocStatus = await createContentDocumentLink(cvData.records[0].contentdocumentid, 
+                        
+                        createContentDocumentLink(cvData.records[0].contentdocumentid, 
                                 parentId,
                                 context,
-                                accessToken)
+                                accessToken,
+                                logger)
+                                .then(info => {
+                                    logger.info(info)
+                                })
+                                .catch(error => {
+                                    logger.info(error)
+                                })
                         logger.info(`${contentDocStatus}`)                        
                     })
                     .catch(error => {
@@ -101,7 +109,7 @@ export default async function (event, context, logger) {
     }
 }
 
-async function createContentDocumentLink(docId, linkedId, context, accessToken) {
+async function createContentDocumentLink(docId, linkedId, context, accessToken, logger) {
     const body = {
         'ContentDocumentId': `${docId}`,
         'LinkedEntityId': `${linkedId}`,
