@@ -93,7 +93,7 @@ export default async function (event, context, logger) {
                                         logger)
                                         .then(info => {
                                             logger.info(JSON.stringify(info))
-                                            return JSON.stringify(info)
+                                            return `Final Result: ${JSON.stringify(info)}`
                                         })
                                         .catch(error => {
                                             logger.info(error)
