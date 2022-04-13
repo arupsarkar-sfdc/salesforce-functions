@@ -76,7 +76,8 @@ export default async function (event, context, logger) {
                                                                             }
                                                                         })
                 const cvData = await response.json()
-                return cvData
+                logger.info(`ContentVersion Response:${JSON.stringify(cvData)}`)
+                return JSON.stringify(cvData)
             })
     }catch(err) {
         logger.info(`Exception : ${err}`)
