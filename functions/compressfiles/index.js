@@ -83,7 +83,7 @@ export default async function (event, context, logger) {
                         const contentDocQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${info.id}'`
                         const contentDocResults = await context.org.dataApi.query(contentDocQuery) 
                         logger.info(`ContentVersion Query Results :${JSON.stringify(contentDocResults)}`)
-                        JSON.parse(JSON.stringify(contentDocResults))
+                        promisedParseJSON(JSON.stringify(contentDocResults))
                             .then(info => {
                                 logger.info(info.records[0].contentdocumentid)
                             })
@@ -112,6 +112,16 @@ export default async function (event, context, logger) {
     }catch(err) {
         logger.info(`Exception : ${err}`)
     }
+}
+
+function promisedParseJSON(json) {
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(JSON.parse(json))
+        } catch (e) {
+            reject(e)
+        }
+    })
 }
 
 async function createContentDocumentLink(docId, linkedId, context, accessToken, logger) {
