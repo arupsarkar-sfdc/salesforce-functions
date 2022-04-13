@@ -84,7 +84,7 @@ export default async function (event, context, logger) {
                                                                             }
                                                                         })
                 const cvData = await response.json()
-                logger.info(`${cvData}`)
+                logger.info(`${JSON.stringify(cvData)}`)
 
                     // .toFile(`./outbound/${timestamp} + .webp`)
                     //     .then((info) => {
