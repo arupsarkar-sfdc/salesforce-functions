@@ -13,7 +13,7 @@
 import sharp from 'sharp'
 import fs from 'fs'
 // import https from 'https'
-// import fetch from 'node-fetch'
+import fetch from 'node-fetch'
 // import { request } from 'http'
 import request from 'request'
  
@@ -64,7 +64,27 @@ export default async function (event, context, logger) {
                 const fileBuffer =  await sharp(`./processing/${ref}`)
                                             .webp({quality: 20})
                                             .toBuffer()
-                logger.info(`Reduced File Buffer: ${fileBuffer}`)
+                //logger.info(`Reduced File Buffer: ${fileBuffer}`)
+                //write to contentversion
+                const userId = await context.org.User.id
+                const body = {
+                    'Title': `${timestamp}`,
+                    'PathOnClient': `${timestamp} + .webp`,
+                    'ContentLocation': 'S',
+                    'OwnerId': userId,
+                    'VersionData': fileBuffer
+                }
+                const response = await fetch(context.org.baseUrl + '/services/data/v53.0/sobjects/ContentVersion',
+                                                                        {
+                                                                            method: 'post',
+                                                                            body: JSON.stringify(body),
+                                                                            headers: {
+                                                                                'Content-Type': 'application/json',
+                                                                                'Authorization': 'Bearer ' + accessToken
+                                                                            }
+                                                                        })
+                const cvData = await response.json()
+                logger.info(`${cvData}`)
 
                     // .toFile(`./outbound/${timestamp} + .webp`)
                     //     .then((info) => {
