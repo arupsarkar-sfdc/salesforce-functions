@@ -83,20 +83,26 @@ export default async function (event, context, logger) {
                         const contentDocQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${info.id}'`
                         const contentDocResults = await context.org.dataApi.query(contentDocQuery) 
                         logger.info(`ContentVersion Query Results :${JSON.stringify(contentDocResults)}`)
-                        const cvData = await JSON.parse(JSON.stringify(contentDocResults))
-                        logger.info(`${cvData.records[0].contentdocumentid}`)
+                        JSON.parse(JSON.stringify(contentDocResults))
+                            .then(info => {
+                                logger.info(info.records[0].contentdocumentid)
+                            })
+                            .catch(error => {
+                                logger.info(`Exception: ${error.message}`)
+                            })
+                        //logger.info(`${cvData.records[0].contentdocumentid}`)
                         
-                        createContentDocumentLink(cvData.records[0].contentdocumentid, 
-                                parentId,
-                                context,
-                                accessToken,
-                                logger)
-                                .then(info => {
-                                    logger.info(JSON.stringify(info))
-                                })
-                                .catch(error => {
-                                    logger.info(error)
-                                })
+                        // createContentDocumentLink(cvData.records[0].contentdocumentid, 
+                        //         parentId,
+                        //         context,
+                        //         accessToken,
+                        //         logger)
+                        //         .then(info => {
+                        //             logger.info(JSON.stringify(info))
+                        //         })
+                        //         .catch(error => {
+                        //             logger.info(error)
+                        //         })
                     })
                     .catch(error => {
                         logger.info(`${error}`)
