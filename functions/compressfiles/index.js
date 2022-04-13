@@ -66,7 +66,7 @@ export default async function (event, context, logger) {
                                             .toBuffer()
                 //logger.info(`Reduced File Buffer: ${fileBuffer}`)
                 //write to contentversion
-                const userId = await context.org.User.id
+                const userId = '005J000000EvrkhIAB'
                 const body = {
                     'Title': `${timestamp}`,
                     'PathOnClient': `${timestamp} + .webp`,
