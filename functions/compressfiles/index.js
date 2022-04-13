@@ -75,7 +75,7 @@ export default async function (event, context, logger) {
                                                                                 'Authorization': 'Bearer ' + accessToken
                                                                             }
                                                                         })
-                const cvData = await JSON.parse(response.json())
+                const cvData = await JSON.parse(response)
                 logger.info(`${cvData[0]}`)
                 // logger.info(`ContentVersion Id :${cvData[0].id}`)
                 // logger.info(`ContentVersion Status :${cvData[0].success}`)
