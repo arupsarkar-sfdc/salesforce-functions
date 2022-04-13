@@ -60,15 +60,19 @@ export default async function (event, context, logger) {
                     })
             )
             .on('finish', async(data) => {
-                await sharp(`./processing/${ref}`)
-                    .webp({quality: 20})
-                    .toFile(`./outbound/${timestamp} + .webp`)
-                        .then((info) => {
-                            logger.info(`Sharp Image Info: ${JSON.stringify(info)}`)
-                        })
-                        .catch(err => {
-                            logger.info(`Sharp Image Exception: ${err.message}`)
-                        })                
+
+                const fileBuffer =  await sharp(`./processing/${ref}`)
+                                            .webp({quality: 20})
+                                            .toBuffer()
+                logger.info(`Reduced File Buffer: ${fileBuffer}`)
+
+                    // .toFile(`./outbound/${timestamp} + .webp`)
+                    //     .then((info) => {
+                    //         logger.info(`Sharp Image Info: ${JSON.stringify(info)}`)
+                    //     })
+                    //     .catch(err => {
+                    //         logger.info(`Sharp Image Exception: ${err.message}`)
+                    //     })                
                 logger.info(`Finish: ${data}`)
             })
         // await request
