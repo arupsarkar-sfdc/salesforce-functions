@@ -85,7 +85,7 @@ export default async function (event, context, logger) {
                         logger.info(`ContentVersion Query Results :${JSON.stringify(contentDocResults)}`)
                         promisedParseJSON(JSON.stringify(contentDocResults))
                             .then(info => {
-                                logger.info(info.records[0].contentdocumentid)
+                                logger.info(info.records[0].fields.contentdocumentid)
                             })
                             .catch(error => {
                                 logger.info(`Exception: ${error.message}`)
