@@ -61,7 +61,7 @@ export default async function (event, context, logger) {
                 const versionData = fileBuffer.toString('base64')
                 const body = {
                     'Title': `${timestamp}`,
-                    'PathOnClient': `${timestamp} + .webp`,
+                    'PathOnClient': `${timestamp} + .jpg`,
                     'ContentLocation': 'S',
                     'OwnerId': userId,
                     'VersionData': versionData
