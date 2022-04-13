@@ -77,9 +77,8 @@ export default async function (event, context, logger) {
                                                                         })
                 response.json()
                     .then(info => {
-                        logger.info(`${info}`)
-                        const cvData = JSON.parse(info)
-                        logger.info(`${cvData[0].id}`)
+                        logger.info(`${JSON.stringify(info)}`)
+                        logger.info(`${info.id}`)
                     })
                     .catch(error => {
                         logger.info(`${error}`)
@@ -100,7 +99,7 @@ export default async function (event, context, logger) {
                 //         context,
                 //         accessToken)
                 // logger.info(`${contentDocStatus}`)
-                return JSON.stringify(cvData)
+                return JSON.stringify({'success': true})
             })
     }catch(err) {
         logger.info(`Exception : ${err}`)
