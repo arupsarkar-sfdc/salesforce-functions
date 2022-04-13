@@ -75,23 +75,23 @@ export default async function (event, context, logger) {
                                                                                 'Authorization': 'Bearer ' + accessToken
                                                                             }
                                                                         })
-                const cvData = await JSON.parse(JSON.stringify(response.json()))
-                logger.info(`${JSON.stringify(cvData)}`)
-                logger.info(`ContentVersion Id :${cvData[0].id}`)
-                logger.info(`ContentVersion Status :${cvData[0].success}`)
-                logger.info(`ContentVersion Errors :${JSON.stringify(cvData[0].errors)}`)
+                const cvData = await JSON.parse(response.json())
+                logger.info(`${cvData[0]}`)
+                // logger.info(`ContentVersion Id :${cvData[0].id}`)
+                // logger.info(`ContentVersion Status :${cvData[0].success}`)
+                // logger.info(`ContentVersion Errors :${JSON.stringify(cvData[0].errors)}`)
 
-                //attachh the file to the parent linked id
-                //1. Query ContentVersion to get ContentDocumentId
-                const contentDocQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${cvData[0].id}'`
-                const contentDocResults = await context.org.dataApi.query(contentDocQuery) 
-                logger.info(`ContentVersion Query Results :${JSON.stringify(contentDocResults)}`)
-                logger.info(`${contentDocResults.records[0].contentdocumentid}`)
-                const contentDocStatus = await createContentDocumentLink(contentDocResults.records[0].contentdocumentid, 
-                        parentId,
-                        context,
-                        accessToken)
-                logger.info(`${contentDocStatus}`)
+                // //attachh the file to the parent linked id
+                // //1. Query ContentVersion to get ContentDocumentId
+                // const contentDocQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${cvData[0].id}'`
+                // const contentDocResults = await context.org.dataApi.query(contentDocQuery) 
+                // logger.info(`ContentVersion Query Results :${JSON.stringify(contentDocResults)}`)
+                // logger.info(`${contentDocResults.records[0].contentdocumentid}`)
+                // const contentDocStatus = await createContentDocumentLink(contentDocResults.records[0].contentdocumentid, 
+                //         parentId,
+                //         context,
+                //         accessToken)
+                // logger.info(`${contentDocStatus}`)
                 return JSON.stringify(cvData)
             })
     }catch(err) {
