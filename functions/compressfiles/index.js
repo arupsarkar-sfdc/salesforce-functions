@@ -26,19 +26,11 @@ export default async function (event, context, logger) {
     const results = await context.org.dataApi.query(query)  
     const accessToken = await context.org.dataApi.accessToken
     try {
-        logger.info(JSON.stringify(results))
         const data = await JSON.parse(JSON.stringify(results))
-        logger.info(`Access Token : ${accessToken}`)
-        logger.info(`Content Document Link Id: ${data.records[0].fields.id}`)
-        logger.info(`Content Document Id: ${data.records[0].fields.contentdocumentid}`)
-        logger.info(`Content VersionData URL: ${data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData}`)
         const fileURL = context.org.domainUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
-        logger.info(`Domain File URL: ${fileURL}`)
         const timestamp = new Date().toISOString()
         const ref = `${timestamp}.jpg`
-        logger.info(`filename: ${ref}`)
         const fileInput = context.org.baseUrl + data.records[0].fields.contentdocument.LatestPublishedVersion.VersionData
-        logger.info(`Base File URL: ${fileInput}`)        
         await request
             .get(
                 fileInput
@@ -64,7 +56,6 @@ export default async function (event, context, logger) {
                 const fileBuffer =  await sharp(`./processing/${ref}`)
                                             .webp({quality: 20})
                                             .toBuffer()
-                //logger.info(`Reduced File Buffer: ${fileBuffer}`)
                 //write to contentversion
                 const userId = '005J000000EvrkhIAB'
                 const versionData = fileBuffer.toString('base64')
@@ -85,78 +76,13 @@ export default async function (event, context, logger) {
                                                                             }
                                                                         })
                 const cvData = await response.json()
-                logger.info(`${JSON.stringify(cvData)}`)
-
-                    // .toFile(`./outbound/${timestamp} + .webp`)
-                    //     .then((info) => {
-                    //         logger.info(`Sharp Image Info: ${JSON.stringify(info)}`)
-                    //     })
-                    //     .catch(err => {
-                    //         logger.info(`Sharp Image Exception: ${err.message}`)
-                    //     })                
-                logger.info(`Finish: ${data}`)
+                return cvData
             })
-        // await request
-        //     .get(
-        //         fileInput
-        //     )
-        //     .auth(null, null, true, accessToken)
-        //     .on("error", (err) => {
-        //         if(err){
-        //             logger.info("Exception : ", err)
-        //         }
-        //     })
-        //     .pipe(
-        //         fs.createWriteStream(`./processing/${ref}`, { encoding: "utf8" })
-        //             .then(info => {
-        //                 logger.info('---> create stream ',info)
-        //             })
-        //             .catch(error => {
-        //                 logger.error('---> create stream ',error)
-        //             })
-        //     )
-        //     .on('finish', async (data) => {
-        //         logger.info('---> finish data ', data)
-        //         await sharp(`./processing/${ref}`)
-        //             .webp({quality: 20})
-        //             .toFile(`./outbound/${timestamp} + .webp`)
-        //                 .then((info) => {
-        //                     logger.info('---> sharp info ', info)
-        //                 })
-        //                 .catch(err => {
-        //                     logger.info('---> sharp err ', err)
-        //                 })
-        //         logger.info("---> process finished ", data)
-        //     })
     }catch(err) {
         logger.info(`Exception : ${err}`)
     }
-
-
-    return results
 }
 // helper methods below - ignore
-async function compressImage(fileRef, context, logger) {
-    logger.info('---> version data ', fileRef)
-    await request
-        .get(
-            context.org.baseUrl + fileRef
-        )
-        .auth(null, null, true, context.org.dataApi.accessToken)
-        .on("error", (err) => {
-            if(err){
-                logger.info("Exception : ", err)
-            }
-        })
-        .pipe(
-            fs.createWriteStream("./output/modified.jpg", { encoding: "utf8" })            
-        )
-        .on("finish", (data) => {
-            logger.info("---> process finished ", data)
-        })
-
-}
-
 async function getMetadata(fileRef) {
     try {
       const metadata = await sharp(fileRef).metadata();
