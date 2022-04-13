@@ -92,12 +92,11 @@ export default async function (event, context, logger) {
                                 accessToken,
                                 logger)
                                 .then(info => {
-                                    logger.info(info)
+                                    logger.info(JSON.stringify(info))
                                 })
                                 .catch(error => {
                                     logger.info(error)
                                 })
-                        logger.info(`${contentDocStatus}`)                        
                     })
                     .catch(error => {
                         logger.info(`${error}`)
@@ -125,7 +124,7 @@ async function createContentDocumentLink(docId, linkedId, context, accessToken, 
         }
     })
     const contentDocLinkData = await response.json()   
-    logger.info(`${contentDocLinkData}`) 
+    logger.info(`${JSON.stringify(contentDocLinkData)}`) 
     return contentDocLinkData
 }
 
